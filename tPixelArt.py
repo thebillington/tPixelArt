@@ -6,16 +6,31 @@ import sys
 class Image():
 	
 	# Constructor that takes in some default width and height for window size, number of squares on the grid and whether the gridlines are visible
-	def __init__(self, imageData, size = 480, gridSize = 8, gridVisible=False):
+	def __init__(self, imageData, size = 480, gridSize = 8, gridVisible=False, showDrawing = False, showBorder = False):
 		
 		# Set the traceback limit
 		sys.tracebacklimit = None
 		
-		# Hide the turtle
-		t.hideturtle()
+		# Clear the turtle window
+		t.clear()
 		
-		# Disable the tracer
-		t.tracer(0, 0)
+		# If the user doesn't want to show the drawing
+		if not showDrawing:
+		
+			# Hide the turtle
+			t.hideturtle()
+			
+			# Disable the tracer
+			t.tracer(0, 0)
+			
+		# Otherwise
+		else:
+			# Reset
+			t.showturtle()
+			t.tracer(1, 0)
+		
+		# set the pixel colours
+		self.colours = ["white", "black"]
 		
 		# Set the default size, width of the grid and grid size
 		self.size = size
@@ -27,19 +42,31 @@ class Image():
 		
 		# Check the image data
 		self.checkImageData()
+			
+		# Draw the image
+		self.drawImage()
 		
-		# Draw the image border
-		self.drawBorder()
+		# Set the colour to black
+		t.color("black")
 		
 		# If the grid is visible, draw it
 		if gridVisible:
 			self.drawGrid()
 			
-		# Draw the grid
-		t.update()
+		# If the user wants to show the border
+		if showBorder:
+			
+			# Draw the image border
+			self.drawBorder()
 		
-		# Exit on click
-		t.exitonclick()
+		# If the user doesn't want to show the drawing
+		if not showDrawing:
+			
+			# Draw the grid
+			t.update()
+			
+		# Wait for user input
+		input("Press any key to continue...")
 			
 	# Define a function to draw the image border
 	def drawBorder(self):
@@ -58,6 +85,9 @@ class Image():
 		# Set the x and y locations
 		x = x - int(self.size / 2)
 		y = -y + int(self.size / 2)
+		
+		# Set the pen colour to black
+		t.color("black")
 		
 		# Go to the specified location
 		t.penup()
@@ -105,12 +135,38 @@ class Image():
 				
 				# Throw an exception
 				raise ImageDataError("You do not have the correct number of pixels in row {} of your image!".format(i + 1))
+	
+	# Create a function to draw the image
+	def drawImage(self):
+		
+		# For each row in the image data
+		for i in range(self.gridSize):
 			
-			
+			# Look at each pixel
+			for j in range(self.gridSize):
+				
+				# Set the x and y
+				x = j * self.pixelWidth
+				y = i * self.pixelWidth
+				
+				# Set the location for the line and heading for this pixel
+				self.setLocation(x, y, 0)
+				
+				# Get the pixel colour
+				t.color(self.colours[int(self.imageData[i][j])])
+				
+				# Start the fill
+				t.begin_fill()
+				
+				# Draw the pixel
+				for x in range(4):
+					t.forward(self.pixelWidth)
+					t.right(90)
+					
+				# End the fill
+				t.end_fill()
 		
 # Define an image data error
 class ImageDataError(Exception):
 	
 	pass
-
-img = Image([["test"], ["test"], ["test"], ["test"], ["test"], ["test"], ["test"], ["test"]])
