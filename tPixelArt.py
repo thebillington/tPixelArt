@@ -1,11 +1,15 @@
 # Import the turtle library
 import turtle as t
+import sys
 
 # Create an image object
 class Image():
 	
 	# Constructor that takes in some default width and height for window size, number of squares on the grid and whether the gridlines are visible
-	def __init__(self, size = 480, gridSize = 8, gridVisible=False):
+	def __init__(self, imageData, size = 480, gridSize = 8, gridVisible=False):
+		
+		# Set the traceback limit
+		sys.tracebacklimit = None
 		
 		# Hide the turtle
 		t.hideturtle()
@@ -17,6 +21,12 @@ class Image():
 		self.size = size
 		self.gridSize = gridSize
 		self.pixelWidth = int(size / gridSize)
+		
+		# Get the image data
+		self.imageData = imageData
+		
+		# Check the image data
+		self.checkImageData()
 		
 		# Draw the image border
 		self.drawBorder()
@@ -74,5 +84,33 @@ class Image():
 			
 			# Draw the line
 			t.forward(self.size)
+			
+	# Function to check that the image data is compatible
+	def checkImageData(self):
+		
+		# Check if there is the correct number of rows
+		if not len(self.imageData) == self.gridSize:
+			
+			# Throw an exception
+			raise ImageDataError("You do not have the correct number of rows in your image!")
+			
+		# Check that each row has the correct number of pixels
+		for i in range(len(self.imageData)):
+			
+			# Get the row
+			row = self.imageData[i]
+		
+			# Check if there is the correct number of rows
+			if not len(row) == self.gridSize:
+				
+				# Throw an exception
+				raise ImageDataError("You do not have the correct number of pixels in row {} of your image!".format(i + 1))
+			
+			
+		
+# Define an image data error
+class ImageDataError(Exception):
+	
+	pass
 
-img = Image(480, 16, True)
+img = Image([["test"], ["test"], ["test"], ["test"], ["test"], ["test"], ["test"], ["test"]])
